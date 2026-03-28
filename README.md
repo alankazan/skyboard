@@ -1,68 +1,68 @@
 # SkyBoard
 
-Dashboard HUD de monitoramento para home servers.
-Interface estilo terminal/CRT com métricas de sistema em tempo real e atalhos para serviços Docker.
+A terminal/CRT-style monitoring HUD dashboard for home servers.
+Displays real-time system metrics and quick-launch shortcuts for Docker services.
 
 ---
 
-## Acesso
+## Access
 
 | Via | URL |
 |-----|-----|
-| Rede local | http://`<IP_DO_SERVIDOR>`:8585 |
-| Tailscale / VPN | http://`<IP_VPN>`:8585 |
+| Local network | http://`<SERVER_IP>`:8585 |
+| Tailscale / VPN | http://`<VPN_IP>`:8585 |
 
 ---
 
 ## Stack
 
-| Camada | Tecnologia |
-|--------|-----------|
+| Layer | Technology |
+|-------|-----------|
 | Backend | Python 3.12 + FastAPI + Uvicorn |
-| Frontend | HTML/CSS/JS puro (sem frameworks) |
-| Container | Docker (build local) |
-| Métricas | psutil + pynvml (GPU NVIDIA) |
+| Frontend | Vanilla HTML/CSS/JS (no frameworks) |
+| Container | Docker (local build) |
+| Metrics | psutil + pynvml (NVIDIA GPU) |
 
 ---
 
-## Estrutura
+## Project Structure
 
 ```
 Skyboard/
-├── server.py              # Backend FastAPI — API de métricas + serve estático
-├── requirements.txt       # Dependências Python
-├── Dockerfile             # Build da imagem
-├── docker-compose.yml     # Configuração do container
+├── server.py              # FastAPI backend — metrics API + static file serving
+├── requirements.txt       # Python dependencies
+├── Dockerfile             # Image build
+├── docker-compose.yml     # Container configuration
 └── static/
-    ├── index.html         # SPA principal
+    ├── index.html         # Main SPA
     ├── manifest.json      # PWA manifest
-    ├── sw.js              # Service Worker (cache offline)
+    ├── sw.js              # Service Worker (offline cache)
     ├── css/
-    │   └── style.css      # Todos os estilos (temas, CRT FX, HUD)
+    │   └── style.css      # All styles (themes, CRT FX, HUD)
     ├── js/
-    │   ├── app.js         # Lógica principal (métricas, grupos, edição, HUD)
-    │   └── quotes.js      # Frases sarcásticas do Skynet (rodapé aleatório)
+    │   ├── app.js         # Core logic (metrics, groups, edit mode, HUD, i18n)
+    │   └── quotes.js      # Skynet sarcastic quotes (PT-BR + EN-US)
     └── icons/
-        └── icon-512.png   # Ícone PWA
+        └── icon-512.png   # PWA icon
 ```
 
 ---
 
 ## API
 
-Todos os endpoints são servidos pelo mesmo servidor na porta `8585`.
+All endpoints are served by the same server on port `8585`.
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| `GET` | `/api/metrics` | Métricas do sistema (CPU, RAM, GPU, temp, rede, disco) |
-| `GET` | `/api/config` | Configuração salva do dashboard |
-| `POST` | `/api/config` | Salva configuração (requer `X-API-Key` se `ADMIN_PASSWORD` definido) |
-| `POST` | `/api/wallpaper` | Upload de wallpaper (base64) |
-| `GET` | `/api/wallpapers` | Lista wallpapers salvos |
-| `GET` | `/api/wallpaper/{nome}` | Serve arquivo de wallpaper |
-| `GET` | `/api/discover` | Detecta containers Docker em execução |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/metrics` | System metrics (CPU, RAM, GPU, temp, network, disk) |
+| `GET` | `/api/config` | Saved dashboard configuration |
+| `POST` | `/api/config` | Save configuration (requires `X-API-Key` if `ADMIN_PASSWORD` is set) |
+| `POST` | `/api/wallpaper` | Upload wallpaper (base64) |
+| `GET` | `/api/wallpapers` | List saved wallpapers |
+| `GET` | `/api/wallpaper/{name}` | Serve a wallpaper file |
+| `GET` | `/api/discover` | Auto-detect running Docker containers |
 
-### Resposta `/api/metrics`
+### `/api/metrics` Response
 
 ```json
 {
@@ -82,84 +82,88 @@ Todos os endpoints são servidos pelo mesmo servidor na porta `8585`.
 
 ---
 
-## Funcionalidades
+## Features
 
-### Métricas em Tempo Real
-- **CPU** — uso total, por núcleo, frequência, modelo
-- **RAM** — uso percentual, GB usados/total
-- **GPU** — uso, VRAM, temperatura, consumo (NVIDIA via pynvml)
-- **Temperatura** — pico máximo entre todos os sensores hwmon/lm-sensors
-- **SWAP** — uso percentual e GB
-- **Rede** — velocidade upload/download em tempo real (atualiza a cada 1s no backend)
-- **Uptime** — tempo de atividade do sistema
+### Real-Time Metrics
+- **CPU** — overall usage, per-core, frequency, model name
+- **RAM** — usage percentage, GB used/total
+- **GPU** — utilization, VRAM, temperature, power draw (NVIDIA via pynvml)
+- **Temperature** — peak value across all hwmon/lm-sensors sensors
+- **SWAP** — usage percentage and GB
+- **Network** — upload/download speed in real time (updated every 1s in backend)
+- **Uptime** — system uptime
 
-### Atalhos de Serviços
-- Organizados em grupos (Vídeo & Mídia, Automação, Infraestrutura)
-- URLs detectam automaticamente o IP/hostname de acesso (`window.location.hostname`)
-- Modo edição: adicionar, editar, excluir, reordenar serviços e grupos
-- Descoberta automática de containers Docker via socket
+### Service Shortcuts
+- Organized into groups (e.g. Video & Media, Automation, Infrastructure)
+- URLs auto-detect the current access IP/hostname via `window.location.hostname`
+- Edit mode: add, edit, delete, reorder services and groups
+- Auto-discovery of running Docker containers via socket
 
-### Temas e Aparência
-- 8 temas prontos: SkyneT, Matrix, Cyberpunk, Amber CRT, Ice Blue, Ghost, Sangue, Neon
-- Cores personalizáveis (accent, fundo, verde, âmbar, azul)
-- Fontes: Share Tech Mono, VT323, Rajdhani, Exo 2
-- Efeitos CRT: scanlines, phosphor flicker, noise grain, glitch bar, vidro quebrado, RGB shift
-- Wallpaper por upload ou URL
+### Themes & Appearance
+- 8 built-in themes: SkyneT, Matrix, Cyberpunk, Amber CRT, Ice Blue, Ghost, Blood, Neon
+- Customizable colors (accent, background, green, amber, blue)
+- Fonts: Share Tech Mono, VT323, Rajdhani, Exo 2
+- CRT effects: scanlines, phosphor flicker, noise grain, glitch bar, broken glass, RGB shift
+- Wallpaper via upload or URL
+
+### Language Toggle
+- Switch between **PT-BR** and **EN-US** with the flag button in the footer
+- Language preference is saved in localStorage
 
 ### PWA
-- Instalável como app (manifest.json + service worker)
-- Cache offline dos assets estáticos
-- Requisições à API sempre passam pela rede (sem cache)
+- Installable as an app (manifest.json + service worker)
+- Offline cache for static assets
+- API requests always bypass the cache (network-first)
 
 ---
 
 ## Deploy
 
 ```bash
-# Subir o container
-cd /home/alan/docker/skyboard/Skyboard
+# Start the container
+cd /path/to/skyboard
 docker compose up -d --build
 
-# Ver logs
+# View logs
 docker compose logs -f
 
-# Parar
+# Stop
 docker compose down
 ```
 
-### Variáveis de Ambiente
+### Environment Variables
 
-| Variável | Padrão | Descrição |
-|----------|--------|-----------|
-| `ADMIN_PASSWORD` | `admin` | Senha para endpoints de escrita (header `X-API-Key`) |
-| `HOST_PROC` | `/host/proc` | Path do /proc do host (montado via volume) |
-| `HOST_SYS` | `/host/sys` | Path do /sys do host (montado via volume) |
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `ADMIN_PASSWORD` | *(empty)* | Password for write endpoints (header `X-API-Key`) |
+| `HOST_PROC` | `/host/proc` | Host `/proc` path (mounted via volume) |
+| `HOST_SYS` | `/host/sys` | Host `/sys` path (mounted via volume) |
 
 ### Volumes
 
-| Volume | Path no container | Descrição |
-|--------|------------------|-----------|
-| `skyboard_data` | `/app/data` | Config do dashboard + wallpapers salvos |
-| `/proc` (host) | `/host/proc` | Leitura de métricas do host |
-| `/sys` (host) | `/host/sys` | Leitura de sensores de temperatura |
-| `/var/run/docker.sock` | `/var/run/docker.sock` | Descoberta de containers |
+| Volume | Container path | Description |
+|--------|---------------|-------------|
+| `skyboard_data` | `/app/data` | Dashboard config + saved wallpapers |
+| `/proc` (host) | `/host/proc` | Host metrics reading |
+| `/sys` (host) | `/host/sys` | Temperature sensor reading |
+| `/var/run/docker.sock` | `/var/run/docker.sock` | Docker container discovery |
 
 ---
 
-## Exemplo de Serviços no Dashboard
+## Default Service Shortcuts
 
-Os atalhos abaixo são os padrões incluídos. Todos são editáveis via modo edição na interface.
+The shortcuts below are included by default. All are editable via the edit mode in the UI.
 
-| Serviço | Porta padrão | Descrição |
-|---------|-------------|-----------|
-| Jellyfin | 8096 | Servidor de streaming de mídia |
-| Jellyseerr | 5055 | Gestão de pedidos de mídia |
-| Immich | 2283 | Galeria de fotos e vídeos |
-| AdGuard Home | 80 | Bloqueio de anúncios via DNS |
-| Open WebUI | 3000 | Interface local para modelos de IA |
-| Frigate | 5000 | NVR para câmeras de segurança |
-| Portainer | 9443 | Gestão de containers Docker |
-| qBittorrent | 8090 | Cliente de torrents |
-| Nextcloud | 8080 | Armazenamento de arquivos |
+| Service | Default Port | Description |
+|---------|-------------|-------------|
+| Jellyfin | 8096 | Media streaming server |
+| Jellyseerr | 5055 | Media request management |
+| Immich | 2283 | Photo and video gallery |
+| AdGuard Home | 80 | DNS ad blocking |
+| Open WebUI | 3000 | Local AI model interface |
+| Frigate | 5000 | Security camera NVR |
+| Portainer | 9443 | Docker container management |
+| qBittorrent | 8090 | Torrent client |
+| Nextcloud | 8080 | File storage |
 
-> As URLs dos atalhos usam `window.location.hostname` automaticamente — não é necessário configurar o IP manualmente.
+> Service URLs use `window.location.hostname` automatically — no manual IP configuration needed.
