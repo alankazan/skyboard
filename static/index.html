@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>SkyBoard</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=3">
 <link rel="icon" id="dynamic-favicon" type="image/png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ff2200">
@@ -80,12 +80,12 @@
       <button class="tb-btn" id="btn-edit" onclick="toggleEdit()">✏ EDITAR</button>
       <button class="tb-btn hud-btn-global" id="btn-reset" onclick="resetAllHud()" style="display:none; color:#ff4400" title="Resetar Layout Absoluto">⟲ RESET LAYOUT</button>
       <button class="tb-btn hud-btn-global" id="btn-group" style="display:none" onclick="openModal('modal-add-group')">📁 + GRUPO</button>
-      <button class="tb-btn" id="btn-theme" onclick="openModal('modal-theme')">🎨 TEMA</button>
+      <button class="tb-btn" id="btn-theme" data-i18n="btnTheme" onclick="openModal('modal-theme')">🎨 TEMA</button>
       <button class="tb-btn hud-btn-global" id="btn-toolbar" onclick="openPropsModal('toolbar')" style="display:none" title="Editar Cor da Barra">⚙ BARRA</button>
       <button class="tb-btn hud-btn-global" id="btn-header" onclick="openPropsModal('header')" style="display:none" title="Editar Cor do Cabeçalho">⚙ NÚCLEO</button>
-    <button class="tb-btn" id="btn-wall" onclick="openModal('modal-wallpaper')">🖼 FUNDO</button>
-    <button class="tb-btn" id="btn-fx" onclick="openModal('modal-fx')">⚡ EFEITOS</button>
-    <button class="tb-btn" id="btn-metrics" onclick="openModal('modal-metrics')">📊 MÉTRICAS</button>
+    <button class="tb-btn" id="btn-wall" data-i18n="btnWall" onclick="openModal('modal-wallpaper')">🖼 FUNDO</button>
+    <button class="tb-btn" id="btn-fx" data-i18n="btnFx" onclick="openModal('modal-fx')">⚡ EFEITOS</button>
+    <button class="tb-btn" id="btn-metrics" data-i18n="btnMetrics" onclick="openModal('modal-metrics')">📊 MÉTRICAS</button>
     <div class="hud-btn-global" style="display:none; align-items:center; gap:6px; margin-left:10px; border-left:1px solid var(--border); padding-left:10px;">
       <span id="ui-scale-lbl" style="font-size:.55rem; color:var(--text-dim); white-space:nowrap; text-shadow:none">📏 ESCALA</span>
       <input type="range" id="ui-scale-slider" min="0.5" max="2.0" step="0.05" value="1.0" oninput="updateScaleHint(this.value)" onchange="applyUiScale(this.value)" style="width:70px; height:4px; accent-color:var(--accent);">
@@ -94,7 +94,7 @@
       <button class="tb-btn" id="btn-discover" onclick="discoverServices()" style="margin-left:10px; background:rgba(0,255,65,0.1); border-color:var(--accent2); color:var(--accent2)">🔍 DESCOBRIR</button>
     </div>
     <div class="tb-sep"></div>
-    <input type="text" id="search-box" placeholder="🔍 Buscar serviço..." oninput="filterServices(this.value)">
+    <input type="text" id="search-box" data-i18n-ph="searchPlaceholder" placeholder="🔍 Buscar serviço..." oninput="filterServices(this.value)">
     <div class="tb-sep"></div>
     <span style="font-size:.8rem; color:var(--text); margin-left:auto; font-family:var(--font-mono); display:flex; gap:14px; align-items:center;">
       <span><span style="color:var(--accent2); text-shadow:none">▼</span> <span id="net-dn-mini">-- KB/s</span></span>
@@ -394,8 +394,8 @@
   </div>
 </div>
 
-  <script src="js/quotes.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/quotes.js?v=3"></script>
+  <script src="js/app.js?v=3"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

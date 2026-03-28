@@ -83,6 +83,11 @@ const TRANSLATIONS = {
     labelPropBg:      'Cor de Fundo (Hex/RGBA)',
     labelPropFg:      'Cor do Título/Destaque',
     labelPropFz:      'Tamanho da Fonte (%)',
+    btnTheme:         '🎨 TEMA',
+    btnWall:          '🖼 FUNDO',
+    btnFx:            '⚡ EFEITOS',
+    btnMetrics:       '📊 MÉTRICAS',
+    searchPlaceholder:'🔍 Buscar serviço...',
     editDone:         '✅ CONCLUIR',
     editStart:        '✏ EDITAR',
     opacityLbl:       '💧 OPACIDADE',
@@ -123,6 +128,11 @@ const TRANSLATIONS = {
     labelPropBg:      'Background Color (Hex/RGBA)',
     labelPropFg:      'Title/Accent Color',
     labelPropFz:      'Font Size (%)',
+    btnTheme:         '🎨 THEME',
+    btnWall:          '🖼 WALLPAPER',
+    btnFx:            '⚡ EFFECTS',
+    btnMetrics:       '📊 METRICS',
+    searchPlaceholder:'🔍 Search service...',
     editDone:         '✅ DONE',
     editStart:        '✏ EDIT',
     opacityLbl:       '💧 OPACITY',
@@ -134,13 +144,22 @@ function t(key) {
 }
 
 function applyLang() {
+  document.documentElement.lang = currentLang;
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     const val = t(key);
     if (val) el.textContent = val;
   });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const key = el.getAttribute('data-i18n-ph');
+    const val = t(key);
+    if (val) el.placeholder = val;
+  });
   const btn = document.getElementById('lang-btn');
   if (btn) btn.textContent = currentLang === 'pt-BR' ? '🇧🇷' : '🇺🇸';
+  // Update edit button text if edit mode is active
+  const editBtn = document.getElementById('btn-edit');
+  if (editBtn) editBtn.textContent = editMode ? t('editDone') : t('editStart');
   applyRandomQuote();
 }
 
