@@ -892,9 +892,11 @@ document.addEventListener('mouseup', () => {
       const parent = document.getElementById('main-grid');
       const newOrder = [...parent.children].filter(c=>c.classList.contains('group')).map(g => g.dataset.groupId);
       CFG.groups.sort((a,b) => newOrder.indexOf(a.id) - newOrder.indexOf(b.id));
+      saveConfig();
     } else if (HUD.el.closest('#res-bar')) {
        const bar = document.getElementById('res-bar');
        CFG.resOrder = [...bar.children].map(c => c.id);
+       saveConfig();
     }
   } else if (HUD.action.startsWith('resize')) {
     saveHudState(HUD.el);
