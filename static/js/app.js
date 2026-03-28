@@ -19,17 +19,17 @@ const DEFAULTS = {
   wallpaper:   '',
   fx: {noise:true, glitch:true, glass:true, scanlines:false, phosphor:false, rgb:false},
   groups: [
-    {id:'g1',name:'Vídeo & Mídia',icon:'🎬',services:[
+    {id:'g1',name:'Vídeo & Mídia',nameKey:'grp1',icon:'🎬',services:[
       {id:'s1',name:'Jellyfin',    desc:'Servidor de streaming', url:`http://${SERVER_HOST}:8096`,icon:'🎬',color:'#00b4ff'},
       {id:'s2',name:'Jellyseerr',  desc:'Gestão de mídia',      url:`http://${SERVER_HOST}:5055`,icon:'🦑',color:'#aa44ff'},
       {id:'s3',name:'Immich',      desc:'Fotos & Vídeos',       url:`http://${SERVER_HOST}:2283`,icon:'📸',color:'#ff6699'},
     ]},
-    {id:'g2',name:'Automação & Redes',icon:'🏠',services:[
+    {id:'g2',name:'Automação & Redes',nameKey:'grp2',icon:'🏠',services:[
       {id:'s5',name:'AdGuard',     desc:'Bloqueio DNS',          url:`http://${SERVER_HOST}:80`,  icon:'🛡️',color:'#67b346'},
       {id:'s13',name:'Open WebUI', desc:'Interface IA local',    url:`http://${SERVER_HOST}:3000`,icon:'🤖',color:'#ffffff'},
       {id:'s14',name:'Frigate',    desc:'NVR câmeras',           url:`http://${SERVER_HOST}:5000`,icon:'📹',color:'#aaaaaa'},
     ]},
-    {id:'g3',name:'Infraestrutura',icon:'🐳',services:[
+    {id:'g3',name:'Infraestrutura',nameKey:'grp3',icon:'🐳',services:[
       {id:'s6',name:'Portainer',   desc:'Gestão Docker',         url:`http://${SERVER_HOST}:9443`,icon:'🐳',color:'#13bef9'},
       {id:'s7',name:'qBittorrent', desc:'Download client',       url:`http://${SERVER_HOST}:8090`,icon:'⬇️',color:'#2dccff'},
       {id:'s8',name:'Nextcloud',   desc:'Arquivos na nuvem',     url:`http://${SERVER_HOST}:8080`,icon:'☁️',color:'#0082c9'},
@@ -91,6 +91,10 @@ const TRANSLATIONS = {
     editDone:         '✅ CONCLUIR',
     editStart:        '✏ EDITAR',
     opacityLbl:       '💧 OPACIDADE',
+    grp1:             'Vídeo & Mídia',
+    grp2:             'Automação & Redes',
+    grp3:             'Infraestrutura',
+    addService:       '+ Adicionar Serviço',
   },
   'en-US': {
     discoveryTitle:   '🔍 Detected Services',
@@ -136,6 +140,10 @@ const TRANSLATIONS = {
     editDone:         '✅ DONE',
     editStart:        '✏ EDIT',
     opacityLbl:       '💧 OPACITY',
+    grp1:             'Video & Media',
+    grp2:             'Automation & Networks',
+    grp3:             'Infrastructure',
+    addService:       '+ Add Service',
   }
 };
 
@@ -161,6 +169,7 @@ function applyLang() {
   const editBtn = document.getElementById('btn-edit');
   if (editBtn) editBtn.textContent = editMode ? t('editDone') : t('editStart');
   applyRandomQuote();
+  renderGroups();
 }
 
 function cycleLang() {
@@ -496,6 +505,11 @@ function renderGroups() {
   applyDimensionsAndStyles();
 }
 
+function _groupLabel(g) {
+  const key = g.nameKey || (DEFAULTS.groups.find(d => d.id === g.id) || {}).nameKey;
+  return key ? t(key) : g.name;
+}
+
 function buildGroup(g) {
   const div = document.createElement('div');
   div.className = 'group';
@@ -504,7 +518,7 @@ function buildGroup(g) {
 
   div.innerHTML = `
     <div class="group-header">
-      <div class="group-title-text"><span class="blink">▶</span> ${g.icon||''} ${g.name}</div>
+      <div class="group-title-text"><span class="blink">▶</span> ${g.icon||''} ${_groupLabel(g)}</div>
       <div class="group-actions">
         <button class="hud-btn" onclick="openPropsModal('${g.id}')" title="Cor/Fonte">⚙</button>
         <button class="ga-btn" onclick="editGroup('${g.id}')" title="Editar">✏</button>
@@ -512,7 +526,7 @@ function buildGroup(g) {
       </div>
     </div>
     <div class="svc-list" id="svclist-${g.id}"></div>
-    <button class="add-svc-btn" onclick="openAddSvc('${g.id}')">+ Adicionar Serviço</button>
+    <button class="add-svc-btn" onclick="openAddSvc('${g.id}')">${t('addService')}</button>
     <div class="rz-h rz-r"></div><div class="rz-h rz-b"></div><div class="rz-h rz-br"></div>
   `;
 
