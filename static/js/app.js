@@ -41,6 +41,114 @@ let CFG = JSON.parse(JSON.stringify(DEFAULTS));
 let metricsTimer = null;
 let editMode = false;
 let dragSrc = null;
+let currentLang = 'pt-BR';
+
+// ═══════════════════════════════════════════════════════
+//  I18N
+// ═══════════════════════════════════════════════════════
+const TRANSLATIONS = {
+  'pt-BR': {
+    discoveryTitle:   '🔍 Serviços Detectados',
+    discoverySubtitle:'Containers Docker encontrados no host',
+    discoveryHint:    'Clique em um serviço para adicioná-lo ao dashboard',
+    themeTitle:       '🎨 Tema & Aparência',
+    themePresets:     'Temas Prontos',
+    themeCustom:      'Cores Personalizadas',
+    labelAccent:      'Cor de Destaque (accent)',
+    labelAccent2:     'Cor Verde / Online',
+    labelAccent3:     'Cor Âmbar / Aviso',
+    labelAccent4:     'Cor Azul / Rede',
+    labelBg:          'Cor de Fundo',
+    labelFont:        'Fonte Principal',
+    labelFontTitle:   'Fonte do Título',
+    labelRadius:      'Bordas Arredondadas',
+    labelDashTitle:   'Título do Dashboard',
+    btnSave:          '💾 Salvar',
+    btnCancel:        'Cancelar',
+    btnCreate:        '💾 Criar',
+    btnApplyStyle:    'Aplicar Estilo',
+    fxTitle:          '⚡ Efeitos Visuais',
+    metricsTitle:     '📊 Widgets de Métricas',
+    metricsSubtitle:  'Mostrar/ocultar widgets na barra de recursos',
+    svcTitle:         '➕ Adicionar Serviço',
+    labelName:        'Nome',
+    labelDesc:        'Descrição',
+    labelUrl:         'URL',
+    labelIcon:        'Ícone (emoji)',
+    labelColor:       'Cor do Ícone',
+    groupTitle:       '📁 Novo Grupo',
+    labelGroupName:   'Nome do Grupo',
+    labelGroupIcon:   'Ícone',
+    propsTitle:       '⚙ Estilo do Elemento',
+    labelPropBg:      'Cor de Fundo (Hex/RGBA)',
+    labelPropFg:      'Cor do Título/Destaque',
+    labelPropFz:      'Tamanho da Fonte (%)',
+    editDone:         '✅ CONCLUIR',
+    editStart:        '✏ EDITAR',
+    opacityLbl:       '💧 OPACIDADE',
+  },
+  'en-US': {
+    discoveryTitle:   '🔍 Detected Services',
+    discoverySubtitle:'Docker containers found on the host',
+    discoveryHint:    'Click a service to add it to the dashboard',
+    themeTitle:       '🎨 Theme & Appearance',
+    themePresets:     'Preset Themes',
+    themeCustom:      'Custom Colors',
+    labelAccent:      'Accent Color',
+    labelAccent2:     'Green / Online Color',
+    labelAccent3:     'Amber / Warning Color',
+    labelAccent4:     'Blue / Network Color',
+    labelBg:          'Background Color',
+    labelFont:        'Main Font',
+    labelFontTitle:   'Title Font',
+    labelRadius:      'Border Radius',
+    labelDashTitle:   'Dashboard Title',
+    btnSave:          '💾 Save',
+    btnCancel:        'Cancel',
+    btnCreate:        '💾 Create',
+    btnApplyStyle:    'Apply Style',
+    fxTitle:          '⚡ Visual Effects',
+    metricsTitle:     '📊 Metrics Widgets',
+    metricsSubtitle:  'Show/hide widgets in the resource bar',
+    svcTitle:         '➕ Add Service',
+    labelName:        'Name',
+    labelDesc:        'Description',
+    labelUrl:         'URL',
+    labelIcon:        'Icon (emoji)',
+    labelColor:       'Icon Color',
+    groupTitle:       '📁 New Group',
+    labelGroupName:   'Group Name',
+    labelGroupIcon:   'Icon',
+    propsTitle:       '⚙ Element Style',
+    labelPropBg:      'Background Color (Hex/RGBA)',
+    labelPropFg:      'Title/Accent Color',
+    labelPropFz:      'Font Size (%)',
+    editDone:         '✅ DONE',
+    editStart:        '✏ EDIT',
+    opacityLbl:       '💧 OPACITY',
+  }
+};
+
+function t(key) {
+  return (TRANSLATIONS[currentLang] || TRANSLATIONS['pt-BR'])[key] || key;
+}
+
+function applyLang() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if (val) el.textContent = val;
+  });
+  const btn = document.getElementById('lang-btn');
+  if (btn) btn.textContent = currentLang === 'pt-BR' ? '🇧🇷' : '🇺🇸';
+  applyRandomQuote();
+}
+
+function cycleLang() {
+  currentLang = currentLang === 'pt-BR' ? 'en-US' : 'pt-BR';
+  localStorage.setItem('skyboard_lang', currentLang);
+  applyLang();
+}
 
 
 const THEMES = [
@@ -58,6 +166,10 @@ const THEMES = [
 //  INIT
 // ═══════════════════════════════════════════════════════
 window.addEventListener('DOMContentLoaded', async () => {
+  // Load saved language
+  const savedLang = localStorage.getItem('skyboard_lang');
+  if (savedLang && TRANSLATIONS[savedLang]) currentLang = savedLang;
+
   // Load Config
   try {
     const r = await fetch(`${DEFAULTS.apiUrl}/api/config`);
@@ -89,7 +201,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     }},
     { name: "ThemeGrid", fn: () => buildThemeGrid() },
     { name: "Groups", fn: () => renderGroups() },
-    { name: "Quotes", fn: () => applyRandomQuote() },
+    { name: "Lang", fn: () => applyLang() },
     { name: "Favicon", fn: () => updateThemedFavicon() },
     { name: "Clock", fn: () => startClock() },
     { name: "Metrics", fn: () => startMetrics() },
@@ -139,7 +251,7 @@ function populateFormValues() {
 
   const opPct = Math.round((CFG.hudOpacity || 0.95) * 100);
   setV('ui-op-slider', opPct);
-  setT('ui-op-lbl', `💧 OPACIDADE (${opPct}%)`);
+  setT('ui-op-lbl', `${t('opacityLbl')} (${opPct}%)`);
   // color pickers live
   ['accent','accent2','accent3','accent4'].forEach(k=>{
     const el = document.getElementById('pick-'+k);
@@ -228,15 +340,19 @@ function applyHudOpacity(v, save=true) {
   CFG.hudOpacity = val;
   document.documentElement.style.setProperty('--hud-opacity', val);
   const lbl = document.getElementById('ui-op-lbl');
-  if (lbl) lbl.textContent = `💧 OPACIDADE (${v}%)`;
+  if (lbl) lbl.textContent = `${t('opacityLbl')} (${v}%)`;
   if (save) saveConfig();
 }
 
 function applyRandomQuote() {
   const el = document.querySelector('#footer .ftxt');
-  if (el && typeof SKYNET_QUOTES !== 'undefined' && SKYNET_QUOTES.length) {
-    const r = Math.floor(Math.random() * SKYNET_QUOTES.length);
-    el.textContent = `[ ${SKYNET_QUOTES[r].toUpperCase()} ]`;
+  if (!el) return;
+  const pool = (currentLang === 'en-US' && typeof SKYNET_QUOTES_EN !== 'undefined' && SKYNET_QUOTES_EN.length)
+    ? SKYNET_QUOTES_EN
+    : (typeof SKYNET_QUOTES !== 'undefined' ? SKYNET_QUOTES : []);
+  if (pool.length) {
+    const r = Math.floor(Math.random() * pool.length);
+    el.textContent = `[ ${pool[r].toUpperCase()} ]`;
   }
 }
 
@@ -563,7 +679,7 @@ function toggleEdit() {
   document.body.classList.toggle('edit-mode', editMode);
   const btn = document.getElementById('btn-edit');
   btn.classList.toggle('active', editMode);
-  btn.textContent = editMode ? '✅ CONCLUIR' : '✏ EDITAR';
+  btn.textContent = editMode ? t('editDone') : t('editStart');
   
   document.querySelectorAll('.hud-btn-global').forEach(b => {
     if (editMode) {

@@ -79,19 +79,19 @@
   <div id="toolbar">
       <button class="tb-btn" id="btn-edit" onclick="toggleEdit()">✏ EDITAR</button>
       <button class="tb-btn hud-btn-global" id="btn-reset" onclick="resetAllHud()" style="display:none; color:#ff4400" title="Resetar Layout Absoluto">⟲ RESET LAYOUT</button>
-      <button class="tb-btn hud-btn-global" style="display:none" onclick="openModal('modal-add-group')">📁 + GRUPO</button>
+      <button class="tb-btn hud-btn-global" id="btn-group" style="display:none" onclick="openModal('modal-add-group')">📁 + GRUPO</button>
       <button class="tb-btn" id="btn-theme" onclick="openModal('modal-theme')">🎨 TEMA</button>
-      <button class="tb-btn hud-btn-global" onclick="openPropsModal('toolbar')" style="display:none" title="Editar Cor da Barra">⚙ BARRA</button>
-      <button class="tb-btn hud-btn-global" onclick="openPropsModal('header')" style="display:none" title="Editar Cor do Cabeçalho">⚙ NÚCLEO</button>
-    <button class="tb-btn" onclick="openModal('modal-wallpaper')">🖼 FUNDO</button>
-    <button class="tb-btn" onclick="openModal('modal-fx')">⚡ EFEITOS</button>
-    <button class="tb-btn" onclick="openModal('modal-metrics')">📊 MÉTRICAS</button>
+      <button class="tb-btn hud-btn-global" id="btn-toolbar" onclick="openPropsModal('toolbar')" style="display:none" title="Editar Cor da Barra">⚙ BARRA</button>
+      <button class="tb-btn hud-btn-global" id="btn-header" onclick="openPropsModal('header')" style="display:none" title="Editar Cor do Cabeçalho">⚙ NÚCLEO</button>
+    <button class="tb-btn" id="btn-wall" onclick="openModal('modal-wallpaper')">🖼 FUNDO</button>
+    <button class="tb-btn" id="btn-fx" onclick="openModal('modal-fx')">⚡ EFEITOS</button>
+    <button class="tb-btn" id="btn-metrics" onclick="openModal('modal-metrics')">📊 MÉTRICAS</button>
     <div class="hud-btn-global" style="display:none; align-items:center; gap:6px; margin-left:10px; border-left:1px solid var(--border); padding-left:10px;">
       <span id="ui-scale-lbl" style="font-size:.55rem; color:var(--text-dim); white-space:nowrap; text-shadow:none">📏 ESCALA</span>
       <input type="range" id="ui-scale-slider" min="0.5" max="2.0" step="0.05" value="1.0" oninput="updateScaleHint(this.value)" onchange="applyUiScale(this.value)" style="width:70px; height:4px; accent-color:var(--accent);">
       <span id="ui-op-lbl" style="font-size:.55rem; color:var(--text-dim); white-space:nowrap; margin-left:10px; text-shadow:none">💧 OPACIDADE</span>
       <input type="range" id="ui-op-slider" min="0" max="100" step="1" value="100" oninput="applyHudOpacity(this.value)" style="width:70px; height:4px; accent-color:var(--accent2);">
-      <button class="tb-btn" onclick="discoverServices()" style="margin-left:10px; background:rgba(0,255,65,0.1); border-color:var(--accent2); color:var(--accent2)">🔍 DESCOBRIR</button>
+      <button class="tb-btn" id="btn-discover" onclick="discoverServices()" style="margin-left:10px; background:rgba(0,255,65,0.1); border-color:var(--accent2); color:var(--accent2)">🔍 DESCOBRIR</button>
     </div>
     <div class="tb-sep"></div>
     <input type="text" id="search-box" placeholder="🔍 Buscar serviço..." oninput="filterServices(this.value)">
@@ -106,12 +106,12 @@
 <div class="modal-overlay hidden" id="modal-discovery">
 <div class="modal" style="max-width:500px">
   <button class="modal-close" onclick="closeModal('modal-discovery')">✕</button>
-  <h2>🔍 Serviços Detectados</h2>
-  <div style="font-size:.57rem;color:var(--text-dim);margin-bottom:12px;">Containers Docker encontrados no host</div>
+  <h2 data-i18n="discoveryTitle">🔍 Serviços Detectados</h2>
+  <div data-i18n="discoverySubtitle" style="font-size:.57rem;color:var(--text-dim);margin-bottom:12px;">Containers Docker encontrados no host</div>
   <div id="discovery-list" style="max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;">
     <!-- Filled by JS -->
   </div>
-  <div style="margin-top:16px;font-size:0.55rem;color:var(--text-dim);text-align:center">Clique em um serviço para adicioná-lo ao dashboard</div>
+  <div data-i18n="discoveryHint" style="margin-top:16px;font-size:0.55rem;color:var(--text-dim);text-align:center">Clique em um serviço para adicioná-lo ao dashboard</div>
 </div>
 </div>
   <div id="res-bar">
@@ -187,7 +187,8 @@
 
   <!-- FOOTER -->
   <footer id="footer">
-    <div class="ftxt">[ INICIALIZANDO PROTOCOLOS DE SARCASMO... ]</div>
+    <div class="ftxt" id="footer-quote">[ INICIALIZANDO PROTOCOLOS DE SARCASMO... ]</div>
+    <button id="lang-btn" onclick="cycleLang()" title="Toggle language / Alternar idioma">🇧🇷</button>
     <div class="fclk" id="clk">--:--:--</div>
   </footer>
 
@@ -199,43 +200,43 @@
 <div class="modal-overlay hidden" id="modal-theme">
 <div class="modal">
   <button class="modal-close" onclick="closeModal('modal-theme')">✕</button>
-  <h2>🎨 Tema & Aparência</h2>
+  <h2 data-i18n="themeTitle">🎨 Tema & Aparência</h2>
 
-  <div style="font-size:.57rem;color:var(--text-dim);margin-bottom:8px;letter-spacing:.1em;text-transform:uppercase;">Temas Prontos</div>
+  <div data-i18n="themePresets" style="font-size:.57rem;color:var(--text-dim);margin-bottom:8px;letter-spacing:.1em;text-transform:uppercase;">Temas Prontos</div>
   <div class="theme-grid" id="theme-grid"></div>
 
-  <div style="margin-top:16px;font-size:.57rem;color:var(--text-dim);margin-bottom:8px;letter-spacing:.1em;text-transform:uppercase;">Cores Personalizadas</div>
+  <div data-i18n="themeCustom" style="margin-top:16px;font-size:.57rem;color:var(--text-dim);margin-bottom:8px;letter-spacing:.1em;text-transform:uppercase;">Cores Personalizadas</div>
   <div class="form-row">
-    <label>Cor de Destaque (accent)</label>
+    <label data-i18n="labelAccent">Cor de Destaque (accent)</label>
     <div class="color-row" id="color-accent">
       <input type="color" value="#ff2200" id="pick-accent" style="width:36px;height:28px;border:none;background:none;cursor:pointer">
       <span style="font-size:.55rem;color:var(--text-dim)">ou escolha:</span>
     </div>
   </div>
   <div class="form-row">
-    <label>Cor Verde / Online</label>
+    <label data-i18n="labelAccent2">Cor Verde / Online</label>
     <div class="color-row">
       <input type="color" value="#00ff41" id="pick-accent2" style="width:36px;height:28px;border:none;background:none;cursor:pointer">
     </div>
   </div>
   <div class="form-row">
-    <label>Cor Âmbar / Aviso</label>
+    <label data-i18n="labelAccent3">Cor Âmbar / Aviso</label>
     <div class="color-row">
       <input type="color" value="#ffb300" id="pick-accent3" style="width:36px;height:28px;border:none;background:none;cursor:pointer">
     </div>
   </div>
   <div class="form-row">
-    <label>Cor Azul / Rede</label>
+    <label data-i18n="labelAccent4">Cor Azul / Rede</label>
     <div class="color-row">
       <input type="color" value="#00aaff" id="pick-accent4" style="width:36px;height:28px;border:none;background:none;cursor:pointer">
     </div>
   </div>
   <div class="form-row">
-    <label>Cor de Fundo</label>
+    <label data-i18n="labelBg">Cor de Fundo</label>
     <input type="color" value="#050100" id="pick-bg" style="width:36px;height:28px;border:none;background:none;cursor:pointer">
   </div>
   <div class="form-row">
-    <label>Fonte Principal</label>
+    <label data-i18n="labelFont">Fonte Principal</label>
     <select id="pick-font" onchange="applyFont(this.value)">
       <option value="'Share Tech Mono', monospace">Share Tech Mono (padrão)</option>
       <option value="'VT323', monospace">VT323 (retrô)</option>
@@ -245,7 +246,7 @@
     </select>
   </div>
   <div class="form-row">
-    <label>Fonte do Título</label>
+    <label data-i18n="labelFontTitle">Fonte do Título</label>
     <select id="pick-font-title" onchange="applyFontTitle(this.value)">
       <option value="'Orbitron', sans-serif">Orbitron (padrão)</option>
       <option value="'Rajdhani', sans-serif">Rajdhani</option>
@@ -258,16 +259,16 @@
     <input type="range" min="20" max="100" value="100" id="pick-brightness" oninput="applyUiBrightness(this.value)">
   </div>
   <div class="form-row">
-    <label>Bordas Arredondadas</label>
+    <label data-i18n="labelRadius">Bordas Arredondadas</label>
     <input type="range" min="0" max="16" value="0" id="pick-radius" oninput="document.documentElement.style.setProperty('--radius',this.value+'px')">
   </div>
   <div class="form-row">
-    <label>Título do Dashboard</label>
+    <label data-i18n="labelDashTitle">Título do Dashboard</label>
     <input type="text" id="pick-title" placeholder="SkyBoard" value="SkyBoard" oninput="document.getElementById('logo-text').textContent=this.value||'SkyBoard'">
   </div>
   <div style="margin-top:12px">
-    <button class="modal-btn" onclick="saveConfig();closeModal('modal-theme')">💾 Salvar</button>
-    <button class="modal-btn secondary" onclick="closeModal('modal-theme')">Cancelar</button>
+    <button class="modal-btn" data-i18n="btnSave" onclick="saveConfig();closeModal('modal-theme')">💾 Salvar</button>
+    <button class="modal-btn secondary" data-i18n="btnCancel" onclick="closeModal('modal-theme')">Cancelar</button>
   </div>
 </div>
 </div>
@@ -292,7 +293,7 @@
 <div class="modal-overlay hidden" id="modal-fx">
 <div class="modal">
   <button class="modal-close" onclick="closeModal('modal-fx')">✕</button>
-  <h2>⚡ Efeitos Visuais</h2>
+  <h2 data-i18n="fxTitle">⚡ Efeitos Visuais</h2>
   <div class="fx-grid">
         <div class="fx-item">
           <span>Scanlines</span>
@@ -320,8 +321,8 @@
 <div class="modal-overlay hidden" id="modal-metrics">
 <div class="modal">
   <button class="modal-close" onclick="closeModal('modal-metrics')">✕</button>
-  <h2>📊 Widgets de Métricas</h2>
-  <div style="font-size:.57rem;color:var(--text-dim);margin-bottom:10px;">Mostrar/ocultar widgets na barra de recursos</div>
+  <h2 data-i18n="metricsTitle">📊 Widgets de Métricas</h2>
+  <div data-i18n="metricsSubtitle" style="font-size:.57rem;color:var(--text-dim);margin-bottom:10px;">Mostrar/ocultar widgets na barra de recursos</div>
   <div class="fx-grid">
     <div class="fx-item"><span>⚡ CPU</span><label class="toggle"><input type="checkbox" id="mw-cpu" checked onchange="toggleWidget('rw-cpu',this.checked)"><span class="toggle-slider"></span></label></div>
     <div class="fx-item"><span>🧠 RAM</span><label class="toggle"><input type="checkbox" id="mw-ram" checked onchange="toggleWidget('rw-ram',this.checked)"><span class="toggle-slider"></span></label></div>
@@ -338,17 +339,17 @@
 <div class="modal-overlay hidden" id="modal-add-svc">
 <div class="modal">
   <button class="modal-close" onclick="closeModal('modal-add-svc')">✕</button>
-  <h2 id="modal-svc-title">➕ Adicionar Serviço</h2>
+  <h2 id="modal-svc-title" data-i18n="svcTitle">➕ Adicionar Serviço</h2>
   <input type="hidden" id="edit-svc-id">
   <input type="hidden" id="edit-group-id">
-  <div class="form-row"><label>Nome</label><input type="text" id="svc-name" placeholder="Jellyfin"></div>
-  <div class="form-row"><label>Descrição</label><input type="text" id="svc-desc" placeholder="Servidor de mídia"></div>
-  <div class="form-row"><label>URL</label><input type="text" id="svc-url" placeholder="http://192.168.1.x:8096"></div>
-  <div class="form-row"><label>Ícone (emoji)</label><input type="text" id="svc-icon" placeholder="🎬" maxlength="4"></div>
-  <div class="form-row"><label>Cor do Ícone</label><input type="color" id="svc-color" value="#00b4ff" style="width:40px;height:28px;border:none;background:none;cursor:pointer"></div>
+  <div class="form-row"><label data-i18n="labelName">Nome</label><input type="text" id="svc-name" placeholder="Jellyfin"></div>
+  <div class="form-row"><label data-i18n="labelDesc">Descrição</label><input type="text" id="svc-desc" placeholder="Servidor de mídia"></div>
+  <div class="form-row"><label data-i18n="labelUrl">URL</label><input type="text" id="svc-url" placeholder="http://192.168.1.x:8096"></div>
+  <div class="form-row"><label data-i18n="labelIcon">Ícone (emoji)</label><input type="text" id="svc-icon" placeholder="🎬" maxlength="4"></div>
+  <div class="form-row"><label data-i18n="labelColor">Cor do Ícone</label><input type="color" id="svc-color" value="#00b4ff" style="width:40px;height:28px;border:none;background:none;cursor:pointer"></div>
   <div style="margin-top:12px">
     <button class="modal-btn" onclick="saveSvc()">💾 Salvar</button>
-    <button class="modal-btn secondary" onclick="closeModal('modal-add-svc')">Cancelar</button>
+    <button class="modal-btn secondary" data-i18n="btnCancel" onclick="closeModal('modal-add-svc')">Cancelar</button>
   </div>
 </div>
 </div>
@@ -357,12 +358,12 @@
 <div class="modal-overlay hidden" id="modal-add-group">
 <div class="modal">
   <button class="modal-close" onclick="closeModal('modal-add-group')">✕</button>
-  <h2>📁 Novo Grupo</h2>
-  <div class="form-row"><label>Nome do Grupo</label><input type="text" id="group-name" placeholder="Mídia"></div>
-  <div class="form-row"><label>Ícone</label><input type="text" id="group-icon" placeholder="🎬" maxlength="4"></div>
+  <h2 data-i18n="groupTitle">📁 Novo Grupo</h2>
+  <div class="form-row"><label data-i18n="labelGroupName">Nome do Grupo</label><input type="text" id="group-name" placeholder="Mídia"></div>
+  <div class="form-row"><label data-i18n="labelGroupIcon">Ícone</label><input type="text" id="group-icon" placeholder="🎬" maxlength="4"></div>
   <div style="margin-top:12px">
-    <button class="modal-btn" onclick="saveGroup()">💾 Criar</button>
-    <button class="modal-btn secondary" onclick="closeModal('modal-add-group')">Cancelar</button>
+    <button class="modal-btn" data-i18n="btnCreate" onclick="saveGroup()">💾 Criar</button>
+    <button class="modal-btn secondary" data-i18n="btnCancel" onclick="closeModal('modal-add-group')">Cancelar</button>
   </div>
 </div>
 </div>
@@ -371,24 +372,24 @@
 <div class="modal-overlay hidden" id="modal-props-overlay" onclick="if(event.target===this) closeModal('modal-props-overlay')">
   <div class="modal" id="modal-props">
     <div class="modal-header">
-      <div class="modal-title">⚙ Estilo do Elemento</div>
+      <div class="modal-title" data-i18n="propsTitle">⚙ Estilo do Elemento</div>
       <button class="modal-close" onclick="closeModal('modal-props-overlay')">✖</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="prop-id">
       <div class="input-grp" style="margin-bottom:8px">
-        <label style="font-size:0.57rem;color:var(--text-dim);">Cor de Fundo (Hex/RGBA)</label>
+        <label data-i18n="labelPropBg" style="font-size:0.57rem;color:var(--text-dim);">Cor de Fundo (Hex/RGBA)</label>
         <input type="text" id="prop-bg" placeholder="Ex: rgba(20,0,0,0.8)" style="width:100%;padding:5px;background:rgba(0,0,0,0.5);border:1px solid var(--border);color:white;font-family:monospace;margin-top:4px;">
       </div>
       <div class="input-grp" style="margin-bottom:8px">
-        <label style="font-size:0.57rem;color:var(--text-dim);">Cor do Título/Destaque</label>
+        <label data-i18n="labelPropFg" style="font-size:0.57rem;color:var(--text-dim);">Cor do Título/Destaque</label>
         <input type="color" id="prop-fg" value="#ff2200" style="width:100%;height:30px;border:none;background:none;cursor:pointer;margin-top:4px;">
       </div>
       <div class="input-grp" style="margin-bottom:12px">
-        <label style="font-size:0.57rem;color:var(--text-dim);">Tamanho da Fonte (%)</label>
+        <label data-i18n="labelPropFz" style="font-size:0.57rem;color:var(--text-dim);">Tamanho da Fonte (%)</label>
         <input type="number" id="prop-fz" value="100" min="10" max="500" style="width:100%;padding:5px;background:rgba(0,0,0,0.5);border:1px solid var(--border);color:white;margin-top:4px;">
       </div>
-      <button class="modal-btn" onclick="saveProps()">Aplicar Estilo Estilizado</button>
+      <button class="modal-btn" data-i18n="btnApplyStyle" onclick="saveProps()">Aplicar Estilo Estilizado</button>
     </div>
   </div>
 </div>

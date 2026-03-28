@@ -366,6 +366,8 @@ body.edit-mode .add-group-btn{display:flex;}
 }
 .ftxt{font-family:var(--font-mono);font-size:.9rem;color:var(--accent);text-shadow:var(--glow-accent);letter-spacing:.1em;}
 .fclk{font-family:var(--font-mono);font-size:.9rem;color:var(--accent3);text-shadow:var(--glow-amber);letter-spacing:.2em;}
+#lang-btn{background:none;border:none;cursor:pointer;font-size:1.1rem;line-height:1;padding:2px 4px;opacity:.8;transition:opacity .2s,transform .15s;}
+#lang-btn:hover{opacity:1;transform:scale(1.2);}
 
 /* ═══ MODALS ═══ */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;
