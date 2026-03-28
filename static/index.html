@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SkyBoard</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" id="dynamic-favicon" type="image/png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ff2200">
+</head>
+<body>
+
+<!-- CRT LAYERS -->
+<div id="wallpaper"></div>
+<div id="fx-noise"></div>
+<div id="fx-phosphor"></div>
+<div id="fx-scanlines"></div>
+<div id="fx-glitch"></div>
+<div id="fx-rgb"></div>
+<div class="glass-crack" id="fx-glass">
+  <div class="crack c1"></div><div class="crack c2"></div>
+  <div class="crack c3"></div><div class="crack c4"></div>
+  <div class="impact">
+    <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="22" y1="22" x2="22" y2="0"  stroke="white" stroke-width="1.2"/>
+      <line x1="22" y1="22" x2="44" y2="10" stroke="white" stroke-width=".9"/>
+      <line x1="22" y1="22" x2="42" y2="40" stroke="white" stroke-width="1"/>
+      <line x1="22" y1="22" x2="6"  y2="44" stroke="white" stroke-width=".8"/>
+      <line x1="22" y1="22" x2="0"  y2="30" stroke="white" stroke-width=".8"/>
+      <line x1="22" y1="22" x2="2"  y2="6"  stroke="white" stroke-width="1"/>
+      <circle cx="22" cy="22" r="3" stroke="white" stroke-width="1"/>
+      <circle cx="22" cy="22" r="7" stroke="white" stroke-width=".4" stroke-dasharray="2 2"/>
+    </svg>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- HEADER -->
+  <header id="header">
+    <div class="logo">
+      <svg class="skull" viewBox="0 0 36 36" fill="currentColor">
+        <ellipse cx="18" cy="15" rx="12" ry="12"/>
+        <rect x="10" y="24" width="5" height="7" rx="1"/>
+        <rect x="21" y="24" width="5" height="7" rx="1"/>
+        <rect x="14" y="24" width="8" height="5"/>
+        <ellipse cx="13" cy="14" rx="3.5" ry="4" fill="#000" opacity=".9"/>
+        <ellipse cx="23" cy="14" rx="3.5" ry="4" fill="#000" opacity=".9"/>
+        <circle cx="13" cy="14" r="1.8" fill="#ff2200"/>
+        <circle cx="23" cy="14" r="1.8" fill="#ff2200"/>
+      </svg>
+      <div>
+        <div class="logo-t" id="logo-text">SkyBoard</div>
+        <div class="logo-s">NEURAL NET-BASED ARTIFICIAL INTELLIGENCE // NODE 7742</div>
+      </div>
+    </div>
+    <div class="api-badge">
+      <div class="api-dot off" id="api-dot"></div>
+      <span id="api-status">OFFLINE</span>
+    </div>
+    <div class="hstats">
+      <div class="hs"><span class="hs-l">UPTIME</span><span class="hs-v" id="h-uptime">--:--:--</span></div>
+      <div class="hs"><span class="hs-l">CPU</span><span class="hs-v" id="h-cpu">--%</span></div>
+      <div class="hs"><span class="hs-l">RAM</span><span class="hs-v" id="h-ram">--%</span></div>
+      <div class="hs" id="h-gpu-wrap" style="display:none">
+        <span class="hs-l">GPU</span><span class="hs-v a" id="h-gpu">--%</span>
+      </div>
+      <div class="threat-bars" title="Threat Level">
+        <div class="tb on"></div><div class="tb on"></div><div class="tb on"></div>
+        <div class="tb on"></div><div class="tb"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- TOOLBAR -->
+  <div id="toolbar">
+      <button class="tb-btn" id="btn-edit" onclick="toggleEdit()">✏ EDITAR</button>
+      <button class="tb-btn hud-btn-global" id="btn-reset" onclick="resetAllHud()" style="display:none; color:#ff4400" title="Resetar Layout Absoluto">⟲ RESET LAYOUT</button>
+      <button class="tb-btn hud-btn-global" style="display:none" onclick="openModal('modal-add-group')">📁 + GRUPO</button>
+      <button class="tb-btn" id="btn-theme" onclick="openModal('modal-theme')">🎨 TEMA</button>
+      <button class="tb-btn hud-btn-global" onclick="openPropsModal('toolbar')" style="display:none" title="Editar Cor da Barra">⚙ BARRA</button>
+      <button class="tb-btn hud-btn-global" onclick="openPropsModal('header')" style="display:none" title="Editar Cor do Cabeçalho">⚙ NÚCLEO</button>
+    <button class="tb-btn" onclick="openModal('modal-wallpaper')">🖼 FUNDO</button>
+    <button class="tb-btn" onclick="openModal('modal-fx')">⚡ EFEITOS</button>
+    <button class="tb-btn" onclick="openModal('modal-metrics')">📊 MÉTRICAS</button>
+    <div class="hud-btn-global" style="display:none; align-items:center; gap:6px; margin-left:10px; border-left:1px solid var(--border); padding-left:10px;">
+      <span id="ui-scale-lbl" style="font-size:.55rem; color:var(--text-dim); white-space:nowrap; text-shadow:none">📏 ESCALA</span>
+      <input type="range" id="ui-scale-slider" min="0.5" max="2.0" step="0.05" value="1.0" oninput="updateScaleHint(this.value)" onchange="applyUiScale(this.value)" style="width:70px; height:4px; accent-color:var(--accent);">
+      <span id="ui-op-lbl" style="font-size:.55rem; color:var(--text-dim); white-space:nowrap; margin-left:10px; text-shadow:none">💧 OPACIDADE</span>
+      <input type="range" id="ui-op-slider" min="0" max="100" step="1" value="100" oninput="applyHudOpacity(this.value)" style="width:70px; height:4px; accent-color:var(--accent2);">
+      <button class="tb-btn" onclick="discoverServices()" style="margin-left:10px; background:rgba(0,255,65,0.1); border-color:var(--accent2); color:var(--accent2)">🔍 DESCOBRIR</button>
+    </div>
+    <div class="tb-sep"></div>
+    <input type="text" id="search-box" placeholder="🔍 Buscar serviço..." oninput="filterServices(this.value)">
+    <div class="tb-sep"></div>
+    <span style="font-size:.8rem; color:var(--text); margin-left:auto; font-family:var(--font-mono); display:flex; gap:14px; align-items:center;">
+      <span><span style="color:var(--accent2); text-shadow:none">▼</span> <span id="net-dn-mini">-- KB/s</span></span>
+      <span><span style="color:var(--accent); text-shadow:none">▲</span> <span id="net-up-mini">-- KB/s</span></span>
+    </span>
+  </div>
+
+  <!-- DISCOVERY MODAL -->
+<div class="modal-overlay hidden" id="modal-discovery">
+<div class="modal" style="max-width:500px">
+  <button class="modal-close" onclick="closeModal('modal-discovery')">✕</button>
+  <h2>🔍 Serviços Detectados</h2>
+  <div style="font-size:.57rem;color:var(--text-dim);margin-bottom:12px;">Containers Docker encontrados no host</div>
+  <div id="discovery-list" style="max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;">
+    <!-- Filled by JS -->
+  </div>
+  <div style="margin-top:16px;font-size:0.55rem;color:var(--text-dim);text-align:center">Clique em um serviço para adicioná-lo ao dashboard</div>
+</div>
+</div>
+  <div id="res-bar">
+    <!-- CPU -->
+    <div class="res-widget" id="rw-cpu">
+      <div class="rw-head">
+        <span class="rw-name">⚡ CPU</span>
+        <div>
+          <button class="hud-btn" onclick="openPropsModal('rw-cpu')" title="Cor/Fonte">⚙</button>
+          <span class="rw-val" id="rw-cpu-v">--%</span>
+        </div>
+      </div>
+      <div class="rw-track"><div class="rw-fill" id="rw-cpu-f" style="width:0"></div></div>
+      <div class="rw-sub" id="rw-cpu-sub">-- cores @ -- MHz</div>
+      <div class="rz-h rz-r"></div><div class="rz-h rz-b"></div><div class="rz-h rz-br"></div>
+    </div>
+    <!-- RAM -->
+    <div class="res-widget" id="rw-ram">
+      <div class="rw-head">
+        <span class="rw-name">🧠 RAM</span>
+        <div>
+          <button class="hud-btn" onclick="openPropsModal('rw-ram')" title="Cor/Fonte">⚙</button>
+          <span class="rw-val" id="rw-ram-v">--%</span>
+        </div>
+      </div>
+      <div class="rw-track"><div class="rw-fill" id="rw-ram-f" style="width:0"></div></div>
+      <div class="rw-sub" id="rw-ram-sub">-- / -- GB</div>
+      <div class="rz-h rz-r"></div><div class="rz-h rz-b"></div><div class="rz-h rz-br"></div>
+    </div>
+    <!-- GPU (shown when available) -->
+    <div class="res-widget" id="rw-gpu" style="display:none">
+      <div class="rw-head">
+        <span class="rw-name">🖥 GPU</span>
+        <div>
+          <button class="hud-btn" onclick="openPropsModal('rw-gpu')">⚙</button>
+          <span class="rw-val" id="rw-gpu-v">--%</span>
+        </div>
+      </div>
+      <div class="rw-track"><div class="rw-fill" id="rw-gpu-f" style="width:0"></div></div>
+      <div class="rw-sub" id="rw-gpu-sub">-- | --°C</div>
+      <div class="rz-h rz-r"></div><div class="rz-h rz-b"></div><div class="rz-h rz-br"></div>
+    </div>
+    <!-- TEMP summary -->
+    <div class="res-widget" id="rw-temp">
+      <div class="rw-head">
+        <span class="rw-name">🌡 TEMP</span>
+        <div>
+          <button class="hud-btn" onclick="openPropsModal('rw-temp')">⚙</button>
+          <span class="rw-val" id="rw-temp-v">--°C</span>
+        </div>
+      </div>
+      <div class="rw-track"><div class="rw-fill" id="rw-temp-f" style="width:0"></div></div>
+      <div class="rw-sub" id="rw-temp-sub">aguardando sensores</div>
+      <div class="rz-h rz-r"></div><div class="rz-h rz-b"></div><div class="rz-h rz-br"></div>
+    </div>
+    <!-- SWAP -->
+    <div class="res-widget" id="rw-swap">
+      <div class="rw-head">
+        <span class="rw-name">🔄 SWAP</span>
+        <div>
+          <button class="hud-btn" onclick="openPropsModal('rw-swap')">⚙</button>
+          <span class="rw-val" id="rw-swap-v">--%</span>
+        </div>
+      </div>
+      <div class="rw-track"><div class="rw-fill" id="rw-swap-f" style="width:0"></div></div>
+      <div class="rw-sub" id="rw-swap-sub">-- / -- GB</div>
+      <div class="rz-h rz-r"></div><div class="rz-h rz-b"></div><div class="rz-h rz-br"></div>
+    </div>
+  </div>
+
+  <!-- SERVICES GRID -->
+  <div id="main-grid"></div>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <div class="ftxt">[ INICIALIZANDO PROTOCOLOS DE SARCASMO... ]</div>
+    <div class="fclk" id="clk">--:--:--</div>
+  </footer>
+
+</div>
+
+<!-- ═══════════════════════════════ MODALS ═══════════════════════════════ -->
+
+<!-- THEME -->
+<div class="modal-overlay hidden" id="modal-theme">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('modal-theme')">✕</button>
+  <h2>🎨 Tema & Aparência</h2>
+
+  <div style="font-size:.57rem;color:var(--text-dim);margin-bottom:8px;letter-spacing:.1em;text-transform:uppercase;">Temas Prontos</div>
+  <div class="theme-grid" id="theme-grid"></div>
+
+  <div style="margin-top:16px;font-size:.57rem;color:var(--text-dim);margin-bottom:8px;letter-spacing:.1em;text-transform:uppercase;">Cores Personalizadas</div>
+  <div class="form-row">
+    <label>Cor de Destaque (accent)</label>
+    <div class="color-row" id="color-accent">
+      <input type="color" value="#ff2200" id="pick-accent" style="width:36px;height:28px;border:none;background:none;cursor:pointer">
+      <span style="font-size:.55rem;color:var(--text-dim)">ou escolha:</span>
+    </div>
+  </div>
+  <div class="form-row">
+    <label>Cor Verde / Online</label>
+    <div class="color-row">
+      <input type="color" value="#00ff41" id="pick-accent2" style="width:36px;height:28px;border:none;background:none;cursor:pointer">
+    </div>
+  </div>
+  <div class="form-row">
+    <label>Cor Âmbar / Aviso</label>
+    <div class="color-row">
+      <input type="color" value="#ffb300" id="pick-accent3" style="width:36px;height:28px;border:none;background:none;cursor:pointer">
+    </div>
+  </div>
+  <div class="form-row">
+    <label>Cor Azul / Rede</label>
+    <div class="color-row">
+      <input type="color" value="#00aaff" id="pick-accent4" style="width:36px;height:28px;border:none;background:none;cursor:pointer">
+    </div>
+  </div>
+  <div class="form-row">
+    <label>Cor de Fundo</label>
+    <input type="color" value="#050100" id="pick-bg" style="width:36px;height:28px;border:none;background:none;cursor:pointer">
+  </div>
+  <div class="form-row">
+    <label>Fonte Principal</label>
+    <select id="pick-font" onchange="applyFont(this.value)">
+      <option value="'Share Tech Mono', monospace">Share Tech Mono (padrão)</option>
+      <option value="'VT323', monospace">VT323 (retrô)</option>
+      <option value="'Rajdhani', sans-serif">Rajdhani (sci-fi)</option>
+      <option value="'Exo 2', sans-serif">Exo 2 (futurista)</option>
+      <option value="'Courier New', monospace">Courier New (terminal)</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label>Fonte do Título</label>
+    <select id="pick-font-title" onchange="applyFontTitle(this.value)">
+      <option value="'Orbitron', sans-serif">Orbitron (padrão)</option>
+      <option value="'Rajdhani', sans-serif">Rajdhani</option>
+      <option value="'Exo 2', sans-serif">Exo 2</option>
+      <option value="'VT323', monospace">VT323</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label>Brilho da Interface (<span id="brightness-val">100</span>%)</label>
+    <input type="range" min="20" max="100" value="100" id="pick-brightness" oninput="applyUiBrightness(this.value)">
+  </div>
+  <div class="form-row">
+    <label>Bordas Arredondadas</label>
+    <input type="range" min="0" max="16" value="0" id="pick-radius" oninput="document.documentElement.style.setProperty('--radius',this.value+'px')">
+  </div>
+  <div class="form-row">
+    <label>Título do Dashboard</label>
+    <input type="text" id="pick-title" placeholder="SkyBoard" value="SkyBoard" oninput="document.getElementById('logo-text').textContent=this.value||'SkyBoard'">
+  </div>
+  <div style="margin-top:12px">
+    <button class="modal-btn" onclick="saveConfig();closeModal('modal-theme')">💾 Salvar</button>
+    <button class="modal-btn secondary" onclick="closeModal('modal-theme')">Cancelar</button>
+  </div>
+</div>
+</div>
+
+<!-- WALLPAPER -->
+<div class="modal-overlay hidden" id="modal-wallpaper">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('modal-wallpaper')">✕</button>
+  <input type="file" id="wp-upload" accept="image/*" style="font-size:.6rem;color:var(--text);margin-bottom:8px;">
+  <div style="font-size:.57rem;color:var(--text-dim);margin:8px 0;letter-spacing:.1em;text-transform:uppercase;">Ou URL da Imagem</div>
+  <div class="form-row">
+    <input type="text" id="wp-url" placeholder="https://...">
+  </div>
+  <div style="margin-top:12px">
+    <button class="modal-btn" onclick="applyWallpaper()">✅ Aplicar</button>
+    <button class="modal-btn secondary" onclick="clearWallpaper()">✕ Remover</button>
+  </div>
+</div>
+</div>
+
+<!-- EFFECTS -->
+<div class="modal-overlay hidden" id="modal-fx">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('modal-fx')">✕</button>
+  <h2>⚡ Efeitos Visuais</h2>
+  <div class="fx-grid">
+        <div class="fx-item">
+          <span>Scanlines</span>
+          <label class="toggle"><input type="checkbox" id="fx-scanlines-ctrl" onchange="toggleFx('scanlines',this.checked)"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="fx-item">
+          <span>Phosphor flicker</span>
+          <label class="toggle"><input type="checkbox" id="fx-phosphor-ctrl" onchange="toggleFx('phosphor',this.checked)"><span class="toggle-slider"></span></label>
+        </div>
+    <div class="fx-item"><span>📡 Ruído (Grain)</span><label class="toggle"><input type="checkbox" id="fx-noi" checked onchange="toggleFx('noise',this.checked)"><span class="toggle-slider"></span></label></div>
+    <div class="fx-item"><span>⚡ Glitch Bar</span><label class="toggle"><input type="checkbox" id="fx-gli" checked onchange="toggleFx('glitch',this.checked)"><span class="toggle-slider"></span></label></div>
+    <div class="fx-item"><span>🔴 Vidro Quebrado</span><label class="toggle"><input type="checkbox" id="fx-gla" checked onchange="toggleFx('glass',this.checked)"><span class="toggle-slider"></span></label></div>
+    <div class="fx-item"><span>🌈 RGB Shift</span><label class="toggle"><input type="checkbox" id="fx-rgb-t" onchange="toggleFxEl('fx-rgb',this.checked)"><span class="toggle-slider"></span></label></div>
+  </div>
+  <div style="margin-top:14px">
+    <div class="form-row">
+      <label>Intensidade Scan Lines</label>
+      <input type="range" min="2" max="40" value="14" id="sl-opacity" oninput="document.documentElement.style.setProperty('--scan-op',this.value/100)">
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- METRICS CONFIG -->
+<div class="modal-overlay hidden" id="modal-metrics">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('modal-metrics')">✕</button>
+  <h2>📊 Widgets de Métricas</h2>
+  <div style="font-size:.57rem;color:var(--text-dim);margin-bottom:10px;">Mostrar/ocultar widgets na barra de recursos</div>
+  <div class="fx-grid">
+    <div class="fx-item"><span>⚡ CPU</span><label class="toggle"><input type="checkbox" id="mw-cpu" checked onchange="toggleWidget('rw-cpu',this.checked)"><span class="toggle-slider"></span></label></div>
+    <div class="fx-item"><span>🧠 RAM</span><label class="toggle"><input type="checkbox" id="mw-ram" checked onchange="toggleWidget('rw-ram',this.checked)"><span class="toggle-slider"></span></label></div>
+    <div class="fx-item"><span>🖥 GPU</span><label class="toggle"><input type="checkbox" id="mw-gpu" checked onchange="toggleWidgetGpu(this.checked)"><span class="toggle-slider"></span></label></div>
+    <div class="fx-item"><span>🌡 Temperatura</span><label class="toggle"><input type="checkbox" id="mw-temp" checked onchange="toggleWidget('rw-temp',this.checked)"><span class="toggle-slider"></span></label></div>
+    <div class="fx-item"><span>🔄 Swap</span><label class="toggle"><input type="checkbox" id="mw-swap" checked onchange="toggleWidget('rw-swap',this.checked)"><span class="toggle-slider"></span></label></div>
+  </div>
+</div>
+</div>
+
+<!-- API CONFIG -->
+
+<!-- ADD SERVICE -->
+<div class="modal-overlay hidden" id="modal-add-svc">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('modal-add-svc')">✕</button>
+  <h2 id="modal-svc-title">➕ Adicionar Serviço</h2>
+  <input type="hidden" id="edit-svc-id">
+  <input type="hidden" id="edit-group-id">
+  <div class="form-row"><label>Nome</label><input type="text" id="svc-name" placeholder="Jellyfin"></div>
+  <div class="form-row"><label>Descrição</label><input type="text" id="svc-desc" placeholder="Servidor de mídia"></div>
+  <div class="form-row"><label>URL</label><input type="text" id="svc-url" placeholder="http://192.168.1.x:8096"></div>
+  <div class="form-row"><label>Ícone (emoji)</label><input type="text" id="svc-icon" placeholder="🎬" maxlength="4"></div>
+  <div class="form-row"><label>Cor do Ícone</label><input type="color" id="svc-color" value="#00b4ff" style="width:40px;height:28px;border:none;background:none;cursor:pointer"></div>
+  <div style="margin-top:12px">
+    <button class="modal-btn" onclick="saveSvc()">💾 Salvar</button>
+    <button class="modal-btn secondary" onclick="closeModal('modal-add-svc')">Cancelar</button>
+  </div>
+</div>
+</div>
+
+<!-- ADD GROUP -->
+<div class="modal-overlay hidden" id="modal-add-group">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('modal-add-group')">✕</button>
+  <h2>📁 Novo Grupo</h2>
+  <div class="form-row"><label>Nome do Grupo</label><input type="text" id="group-name" placeholder="Mídia"></div>
+  <div class="form-row"><label>Ícone</label><input type="text" id="group-icon" placeholder="🎬" maxlength="4"></div>
+  <div style="margin-top:12px">
+    <button class="modal-btn" onclick="saveGroup()">💾 Criar</button>
+    <button class="modal-btn secondary" onclick="closeModal('modal-add-group')">Cancelar</button>
+  </div>
+</div>
+</div>
+
+<!-- WIDGET PROPS MODAL (HUD ENGINE) -->
+<div class="modal-overlay hidden" id="modal-props-overlay" onclick="if(event.target===this) closeModal('modal-props-overlay')">
+  <div class="modal" id="modal-props">
+    <div class="modal-header">
+      <div class="modal-title">⚙ Estilo do Elemento</div>
+      <button class="modal-close" onclick="closeModal('modal-props-overlay')">✖</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="prop-id">
+      <div class="input-grp" style="margin-bottom:8px">
+        <label style="font-size:0.57rem;color:var(--text-dim);">Cor de Fundo (Hex/RGBA)</label>
+        <input type="text" id="prop-bg" placeholder="Ex: rgba(20,0,0,0.8)" style="width:100%;padding:5px;background:rgba(0,0,0,0.5);border:1px solid var(--border);color:white;font-family:monospace;margin-top:4px;">
+      </div>
+      <div class="input-grp" style="margin-bottom:8px">
+        <label style="font-size:0.57rem;color:var(--text-dim);">Cor do Título/Destaque</label>
+        <input type="color" id="prop-fg" value="#ff2200" style="width:100%;height:30px;border:none;background:none;cursor:pointer;margin-top:4px;">
+      </div>
+      <div class="input-grp" style="margin-bottom:12px">
+        <label style="font-size:0.57rem;color:var(--text-dim);">Tamanho da Fonte (%)</label>
+        <input type="number" id="prop-fz" value="100" min="10" max="500" style="width:100%;padding:5px;background:rgba(0,0,0,0.5);border:1px solid var(--border);color:white;margin-top:4px;">
+      </div>
+      <button class="modal-btn" onclick="saveProps()">Aplicar Estilo Estilizado</button>
+    </div>
+  </div>
+</div>
+
+  <script src="js/quotes.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('SW Registered', reg))
+          .catch(err => console.error('SW Failed', err));
+      });
+    }
+  </script>
+</body>
+</html>

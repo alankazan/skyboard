@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  skyboard:
+    build: .
+    container_name: skyboard
+    restart: unless-stopped
+    # ── Acesso ao hardware do host ──────────────────────────────
+    # porta 8585 exposta diretamente via network_mode: host
+    pid: host          # lê processos do host
+    network_mode: host # lê interfaces de rede reais do host
+    privileged: true   # necessário para sensores e GPU
+    volumes:
+      - /proc:/host/proc:ro        # CPU, RAM, disco, rede
+      - /sys:/host/sys:ro          # sensores de temperatura
+      - /etc/os-release:/etc/os-release:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - skyboard_data:/app/data    # wallpapers salvos, configurações
+    environment:
+      - HOST_PROC=/host/proc
+      - HOST_SYS=/host/sys
+      - ADMIN_PASSWORD=admin
+    # ── GPU NVIDIA ──────────────────────────────────────────────
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu, utility, compute]
+    # Se nvidia-container-toolkit não estiver instalado, comente
+    # o bloco "deploy" acima e descomente a linha abaixo:
+    # runtime: nvidia
+
+volumes:
+  skyboard_data:
