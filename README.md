@@ -1,5 +1,5 @@
 # SkyBoard
-<img width="1911" height="906" alt="image" src="https://github.com/user-attachments/assets/a3d48085-2a9d-4f52-bd56-cd525130fe4b" />
+<img width="1913" height="901" alt="image" src="https://github.com/user-attachments/assets/48cf8ba6-3b9b-4e19-a7ad-e83f80becc02" />
 
 A terminal/CRT-style monitoring HUD dashboard for home servers.
 Displays real-time system metrics and quick-launch shortcuts for Docker services.
