@@ -1,4 +1,5 @@
 # SkyBoard
+<img width="1911" height="906" alt="image" src="https://github.com/user-attachments/assets/a3d48085-2a9d-4f52-bd56-cd525130fe4b" />
 
 Dashboard HUD de monitoramento para home servers.
 Interface estilo terminal/CRT com métricas de sistema em tempo real e atalhos para serviços Docker.
