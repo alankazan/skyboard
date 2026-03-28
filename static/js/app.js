@@ -5,6 +5,7 @@ const SERVER_HOST = window.location.hostname || '192.168.1.25';
 
 const DEFAULTS = {
   apiUrl:      '',
+  apiKey:      'admin',
   apiInterval: 2,
   title:       'SkyBoard',
   theme:       'skynet',
@@ -203,7 +204,15 @@ window.addEventListener('DOMContentLoaded', async () => {
     const r = await fetch(`${DEFAULTS.apiUrl}/api/config`);
     if (r.ok) {
       const remote = await r.json();
-      if (remote && typeof remote === 'object') CFG = {...DEFAULTS, ...remote};
+      if (remote && typeof remote === 'object' && Object.keys(remote).length > 0) {
+        CFG = {...DEFAULTS, ...remote};
+      } else {
+        // Server returned empty config, try localStorage
+        const localCfg = localStorage.getItem('skyboard_cfg');
+        if (localCfg) {
+          try { CFG = {...DEFAULTS, ...JSON.parse(localCfg)}; } catch(err) {}
+        }
+      }
     }
   } catch(e) {
     const localCfg = localStorage.getItem('skyboard_cfg');
@@ -301,10 +310,15 @@ function populateFormValues() {
 
 async function saveConfig() {
   try {
-    await fetch(`${CFG.apiUrl}/api/config`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
+    const r = await fetch(`${CFG.apiUrl}/api/config`, {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'X-API-Key': CFG.apiKey || 'admin'
+      },
       body: JSON.stringify(CFG)
     });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
   } catch(e) {
     // save to localStorage as fallback
     localStorage.setItem('skyboard_cfg', JSON.stringify(CFG));
